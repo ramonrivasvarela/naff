@@ -47,7 +47,7 @@ def naff_single(
 
     T = dt * N
 
-    # Time series centered around 0, matching your R construction:
+    # Time series centered around 0
     # t_series <- ((-(N_2 - 1):N_2) - 0.5) * dT
     half = N / 2.0
     t_series = (np.arange(N) + 0.5) * dt  # shape (N,)
@@ -120,7 +120,7 @@ def naff_decompose(
     Each iteration:
     - Runs NAFF on the current residual.
     - Accumulates the reconstructed component.
-    - Stores frequency (folded below Nyquist) and amplitude.
+    - Stores frequency and amplitude.
 
     Parameters
     ----------
@@ -138,7 +138,7 @@ def naff_decompose(
     -------
     freqs : np.ndarray, shape (K,)
         Frequencies in Hz (omega / (2*pi)) for K found components
-        (K <= n_components), all <= Nyquist.
+        (K <= n_components).
     amps : np.ndarray, shape (K,)
         Complex amplitudes corresponding to each frequency.
     """
@@ -169,14 +169,6 @@ def naff_decompose(
         t_series = (np.arange(N) + 0.5) * dt  # shape (N,)
         recon += 2*np.real(amp * np.exp(1j * omega * t_series))
         residual = signal_detr - recon
-
-        # Fold frequency above Nyquist, following your R logic:
-        # if (omega > nyquist) {
-        #   omega <- 2 * nyquist - omega
-        #   amplitude <- 2 * amplitude
-        # } else if (omega != nyquist) {
-        #   amplitude <- 2 * amplitude
-        # }
 
         freq = omega / (2.0 * np.pi)  # convert to Hz-like units
         freqs.append(freq)
